@@ -1,0 +1,125 @@
+<style type="text/css">
+    .header {
+        background: #8a8a8a;
+    }
+    .header .columns {
+        padding-bottom: 0;
+    }
+    .header p {
+        color: #fff;
+        padding-top: 15px;
+    }
+    .header .wrapper-inner {
+        padding: 20px;
+    }
+    .header .container {
+        background: transparent;
+    }
+
+    .wrapper.secondary {
+        background: #f3f3f3;
+    }
+    .image {
+        max-width: 100%;
+    }
+</style>
+
+<wrapper class="header">
+    <container>
+        <row class="collapse">
+            <columns small="6">
+                <img
+                    class="image"
+                    src="https://i.ibb.co/2vhKNXD/logo-6cf9372a.png"
+                />
+            </columns>
+        </row>
+    </container>
+</wrapper>
+
+<container>
+    <spacer size="16"></spacer>
+
+    <row>
+        <columns small="12">
+            <h1>Hi, <%= name %></h1>
+            <p class="lead"><%= message %></p>
+
+            <a
+                style="
+                    background: #5a87e7 !important;
+                    border: 0px;
+                    padding: 4px 8px;
+                    color: #fff;
+                    border-radius: 15px;
+                    text-decoration: none;
+                "
+                href="<%= activeLink %>"
+            >
+                <%= buttonTitle %>
+            </a>
+        </columns>
+    </row>
+    <wrapper class="secondary">
+        <spacer size="16"></spacer>
+
+        <row>
+            <columns large="6">
+                <h5>Connect With Us:</h5>
+                <a
+                    style="
+                        background: #3b5998 !important;
+                        border: 0px;
+                        padding: 4px 8px;
+                        color: #fff;
+                        text-decoration: none;
+                    "
+                    href="https://www.facebook.com/"
+                >
+                    Facebook
+                </a>
+                <a
+                    style="
+                        background: #1daced !important;
+                        border: 0px;
+                        text-decoration: none;
+                        color: #fff;
+                        padding: 4px 8px;
+                    "
+                    href="http://twitter.com"
+                >
+                    Twitter
+                </a>
+                <a
+                    style="
+                        background: #db4a39 !important;
+                        border: 0px;
+                        padding: 4px 8px;
+                        color: #fff;
+                        text-decoration: none;
+                    "
+                    href="https://www.instagram.com"
+                >
+                    Instagram
+                </a>
+            </columns>
+            <columns large="6">
+                <h5>Contact Info:</h5>
+                <p>Phone: 01810-077844</p>
+                <p>
+                    Email:
+                    <a
+                        href="mailto:bdbeponi@gmail.com
+
+                    "
+                        >bdbeponi@gmail.com</a
+                    >
+                </p>
+                <p>
+                    Nigar Plaza, House: 6/A, Level: 6 Near Rajlaxmi Complex.
+                    House: 32-B, Road: 2, Sector: 3, Dhaka 1230
+                </p>
+            </columns>
+        </row>
+    </wrapper>
+</container>
