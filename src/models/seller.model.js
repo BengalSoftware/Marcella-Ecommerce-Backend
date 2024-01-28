@@ -31,6 +31,19 @@ const sellerSchema = new mongoose.Schema({
             "Please enter a valid mobile number",
         ],
     },
+    verified: {
+        type: Boolean,
+        enum: ["True", "False"],
+        default: false,
+    },
+    groupName: {
+        type: String,
+        default: "Default",
+    },
+    role: {
+        type: String,
+        default: 'seller'
+    }
 }, { timestamps: true });
 
 

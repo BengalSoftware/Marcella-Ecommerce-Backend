@@ -98,7 +98,7 @@ module.exports.sellerRegister = async (req, res) => {
                 message: "Email already exists",
             });
         }
-        const user = await new User(req.body);
+        const user = await Seller(req.body);
 
         // password hashing
         const password = user.password;
@@ -146,7 +146,13 @@ module.exports.login = async (req, res, next) => {
                 },
                 null,
                 { maxTimeMS: 30000 }
-            );
+            ) || await Seller.findOne(
+                {
+                    $or: [{ email: userEmail }, { phone: userEmail }],
+                },
+                null,
+                { maxTimeMS: 30000 }
+            )
         }
 
         // step 3: if user not exist then return error
@@ -176,14 +182,14 @@ module.exports.login = async (req, res, next) => {
         //     message: "Your account is not active",
         //   });
         // }
-
+        // console.log(user)
         const token = generateToken(user);
-        const { verified, groupName, email } = user.toObject();
+        const { verified, groupName, email, role } = user.toObject();
 
         res.status(200).json({
             message: "Successfully sign in",
             data: {
-                user: { email, verified, groupName },
+                user: { email, verified, groupName, role },
                 token,
             },
         });
