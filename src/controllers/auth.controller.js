@@ -8,7 +8,7 @@ const Seller = require("../models/seller.model");
 // NEW USER REGISTER CONTROLLER -> USER
 module.exports.register = async (req, res) => {
     try {
-        const isExistEmail = await User.findOne({ email: req.body.email });
+        const isExistEmail = await User.findOne({ email: req.body.email }) || await Seller.findOne({ email: req.body.email });
         if (isExistEmail) {
             return res.status(400).json({
                 message: "Email already exists",
@@ -92,7 +92,7 @@ module.exports.register = async (req, res) => {
 module.exports.sellerRegister = async (req, res) => {
     try {
         const { email } = req.body;
-        const isExistEmail = await Seller.findOne({ email: email });
+        const isExistEmail = await Seller.findOne({ email: email }) || await User.findOne({ email: email });
         if (isExistEmail) {
             return res.status(400).json({
                 message: "Email already exists",
