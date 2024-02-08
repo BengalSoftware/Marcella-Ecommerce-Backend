@@ -10,6 +10,12 @@ router.post("/register", authController.register);
 // DONE - REGISTER BECOME A SELLER
 router.post("/seller-register", authController.sellerRegister);
 
+// DONE - GET ALL SELLER
+router.post("/seller", authController.seller);
+
+// DONE - UPDATE SINGLE SELLER
+router.put("/seller/:id", authController.updateSeller);
+
 // DONE - LOGIN SINGLE USER - CLIENT
 router.post("/login", authController.login);
 

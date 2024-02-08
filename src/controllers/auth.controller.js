@@ -120,6 +120,57 @@ module.exports.sellerRegister = async (req, res) => {
 }
 
 
+// seller get controller 
+
+module.exports.seller = async (req, res) => {
+    try {
+        const seller = await Seller.find();
+        const totalSeller = await Seller.countDocuments();
+        if (seller) {
+            res.status(200).json({
+                message: 'Success',
+                totalSeller,
+                data: seller
+            })
+        } else {
+            res.status(404).json({
+                message: 'Server Side error'
+            })
+        }
+    } catch (error) {
+        res.status(500).json({
+            message: error.message
+        })
+    }
+}
+
+
+//UPDATE SINGLE SELLER  
+module.exports.updateSeller = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const updatedData = req.body;
+        const seller = await Seller.findByIdAndUpdate(id, updatedData, { new: true });
+
+        if (seller) {
+            res.status(200).json({
+                message: 'Seller updated successfully',
+                data: seller
+            });
+        } else {
+            res.status(404).json({
+                message: 'Seller not found'
+            });
+        }
+    } catch (error) {
+        res.status(500).json({
+            message: error.message
+        });
+    }
+};
+
+
+
 
 
 // USER LOGIN CONTROLLER -> USER
