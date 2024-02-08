@@ -91,7 +91,7 @@ module.exports.register = async (req, res) => {
 //SELLER REGISTER CONTROLLER -> SELLER
 module.exports.sellerRegister = async (req, res) => {
     try {
-        const { email } = req.body;
+        const { name, email } = req.body;
         const isExistEmail = await Seller.findOne({ email: email }) || await User.findOne({ email: email });
         if (isExistEmail) {
             return res.status(400).json({
@@ -99,11 +99,21 @@ module.exports.sellerRegister = async (req, res) => {
             });
         }
         const user = await Seller(req.body);
-
+        
         // password hashing
         const password = user.password;
         const hasPassword = bcrypt.hashSync(password);
         user.password = hasPassword;
+        
+        
+        //unique slug
+        const slug = user.name
+        let lowercaseString = slug.toLowerCase();
+        let nameArray = lowercaseString.split(" ");
+        let concatenatedString = nameArray.join("-");
+        let randomNumber = Math.floor(Math.random() * 90 + 10);
+        let finalString = concatenatedString + "-" + randomNumber;
+        user.slug = finalString;
 
         const seller = new Seller(user)
         const result = await seller.save();

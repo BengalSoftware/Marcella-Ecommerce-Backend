@@ -10,6 +10,13 @@ const sellerSchema = new mongoose.Schema({
         minLength: [3, "name must be at least 3 characters long"],
         maxLength: [100, "Name must be at most 100 characters long"],
     },
+    slug: {
+        type: String,
+        required: [true, "slug name is required"],
+        trim: true,
+        minLength: [3, "slug must be at least 3 characters long"],
+        maxLength: [100, "slug must be at most 100 characters long"],
+    },
     email: {
         type: String,
         required: [true, "Email is required"],
