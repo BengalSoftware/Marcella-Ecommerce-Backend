@@ -170,7 +170,8 @@ const getProducts = async (req, res) => {
             .limit(queries.limit)
             // .select(queries.fields)
             .sort(queries.sortBy)
-            .populate({ path: "manufacturer", select: "name" });
+            .populate({ path: "manufacturer", select: "name" })
+            // .pupulate({ path: 'sellerId', select: 'slug' })
 
         const totalProducts = await Product.countDocuments({ $and: filterArr });
         // const totalProductsByFilter = await Product.countDocuments(filters);

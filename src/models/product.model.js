@@ -150,7 +150,10 @@ const productSchema = Schema(
             endDate: Date,
             timeStamps: Number,
         },
-
+        sellerId: {
+            type: Schema.Types.ObjectId,
+            ref: 'Seller'
+        },
         expireDate: {
             type: Schema.Types.Mixed,
         },
