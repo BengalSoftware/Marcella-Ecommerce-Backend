@@ -26,24 +26,24 @@ const desktopBannerSchema = mongoose.Schema(
             unique: true,
             trim: true,
         },
-        categories: [
-            {
-                _id: { type: Schema.Types.ObjectId },
-                name: String,
-            },
-        ],
-        subCategories: [
-            {
-                _id: { type: Schema.Types.ObjectId },
-                name: String,
-            },
-        ],
-        subCategoryChildren: [
-            {
-                _id: { type: Schema.Types.ObjectId },
-                name: String,
-            },
-        ],
+        // categories: [
+        //     {
+        //         _id: { type: Schema.Types.ObjectId },
+        //         name: String,
+        //     },
+        // ],
+        // subCategories: [
+        //     {
+        //         _id: { type: Schema.Types.ObjectId },
+        //         name: String,
+        //     },
+        // ],
+        // subCategoryChildren: [
+        //     {
+        //         _id: { type: Schema.Types.ObjectId },
+        //         name: String,
+        //     },
+        // ],
         url: String,
     },
     {

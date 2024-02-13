@@ -58,9 +58,9 @@ const getSingleBanner = async (req, res) => {
 // CREATE A DESKTOP BANNER -> ADMIN
 const postDesktopBanner = async (req, res) => {
     try {
-        if (!req.body.categories) {
-            return res.status(400).json({ message: "No categories provided" });
-        }
+        // if (!req.body.categories) {
+        //     return res.status(400).json({ message: "No categories provided" });
+        // }
 
         // console.log(req.body);
         const path = req.file.path;
