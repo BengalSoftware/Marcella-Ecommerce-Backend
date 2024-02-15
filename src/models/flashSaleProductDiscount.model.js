@@ -18,6 +18,9 @@ const FlatSaleProductDiscountSchema = mongoose.Schema(
             enum: ["active", "in-active"],
             default: "in-active",
         },
+        color: {
+            type: String
+        },
         offerType: [
             {
                 // type: mongoose.Schema.Types.ObjectId,

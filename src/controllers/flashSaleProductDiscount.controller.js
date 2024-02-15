@@ -114,6 +114,7 @@ const updateSingleFlashSaleProductOffer = async (req, res) => {
         if (req.body.offerType) dbOffer.offerType = req.body.offerType;
         if (req.body.timeStamps) dbOffer.timeStamps = req.body.timeStamps;
         if (req.body.status) dbOffer.status = req.body.status;
+        if (req.body.color) dbOffer.color = req.body.color;
 
         await dbOffer.save();
 
