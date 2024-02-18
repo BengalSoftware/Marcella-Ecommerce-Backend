@@ -135,7 +135,7 @@ const productSchema = Schema(
                 "home-appliance",
                 "computing-and-gaming",
             ],
-            default: "regular-products",
+            default: "popular-products",
         },
         rewardPoints: {
             type: Number,
