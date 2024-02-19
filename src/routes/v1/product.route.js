@@ -52,6 +52,9 @@ router.get(
 // DONE - GET PRODUCTS by PRODUCT CATEGORY - NONE
 router.get("/brand-products/:id", productController.getProductsByBrandId);
 
+// DONE - GET PRODUCTS by PRODUCT CATEGORY - NONE
+router.get("/seller-products/:id", productController.getProductsBySellerId);
+
 // CREATE SINGLE PRODUCT - ADMIN
 router.post(
     "/",

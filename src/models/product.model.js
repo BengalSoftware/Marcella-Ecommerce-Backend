@@ -5,7 +5,6 @@ const productSchema = Schema(
     {
         images: {
             type: Array,
-            required: true,
         },
         name: {
             type: String,

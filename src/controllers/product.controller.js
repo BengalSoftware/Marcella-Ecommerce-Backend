@@ -640,6 +640,26 @@ const getProductsByBrandId = async (req, res) => {
     }
 };
 
+
+// GET PRODUCTS BY SELLER ID
+const getProductsBySellerId = async (req, res) => {
+    try {
+        const data = await Product.find({
+            sellerId: req.params.id,
+        })
+        // .populate({ path: "manufacturer", select: "name" });
+
+        res.status(200).json({
+            result: data,
+            message: "Success",
+        });
+    } catch (err) {
+        res.status(500).json({
+            error: "There was a server side error!",
+        });
+    }
+};
+
 // GET PRODUCTS BY PRODUCT CATEGORY
 const getProductsByCategory = async (req, res) => {
     try {
@@ -1040,4 +1060,5 @@ module.exports = {
     getCampaignProducts,
     getSixFlashProducts,
     getAllFlashProducts,
+    getProductsBySellerId
 };
