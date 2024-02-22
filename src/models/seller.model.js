@@ -20,7 +20,20 @@ const sellerSchema = new mongoose.Schema({
     email: {
         type: String,
         required: [true, "Email is required"],
-        validate: [validator.isEmail, "Provide a valid email"],
+        // validate: [validator.isEmail, "Provide a valid email"],
+        validate: {
+            validator: function (value) {
+                if (validator.isEmail(value)) {
+                    return true; // If it's an email, it's valid
+                } else if (validator.isMobilePhone(value, 'any', { strictMode: false })) {
+                    // If it's a phone number, check if it's at least 11 digits and starts with "01"
+                    return /^(01)[0-9]{9}$/.test(value.replace(/\s/g, '')); // Remove whitespace before validation
+                } else {
+                    return false; // Neither email nor valid phone number
+                }
+            },
+            message: "Provide a valid email or phone number"
+        },
         trim: true,
         lowercase: true,
         unique: true,

@@ -99,13 +99,13 @@ module.exports.sellerRegister = async (req, res) => {
             });
         }
         const user = await Seller(req.body);
-        
+
         // password hashing
         const password = user.password;
         const hasPassword = bcrypt.hashSync(password);
         user.password = hasPassword;
-        
-        
+
+
         //unique slug
         const slug = user.name
         let lowercaseString = slug.toLowerCase();
@@ -115,12 +115,23 @@ module.exports.sellerRegister = async (req, res) => {
         let finalString = concatenatedString + "-" + randomNumber;
         user.slug = finalString;
 
+        const token = generateToken(user);
+
         const seller = new Seller(user)
         const result = await seller.save();
         res.status(200).json({
             message: 'Success Seller',
-            data: result
+            data: {
+                user: {
+                    name: result?.name,
+                    email: result?.email,
+                    status: result?.status,
+                    role: result?.role
+                },
+                token,
+            }
         })
+
     } catch (error) {
         res.status(500).json({
             message: "failure",
@@ -245,12 +256,12 @@ module.exports.login = async (req, res, next) => {
         // }
         // console.log(user)
         const token = generateToken(user);
-        const { verified, groupName, email, role } = user.toObject();
+        const { verified, groupName, email, role, status } = user.toObject();
 
         res.status(200).json({
             message: "Successfully sign in",
             data: {
-                user: { email, verified, groupName, role },
+                user: { email, verified, groupName, role, status },
                 token,
             },
         });
