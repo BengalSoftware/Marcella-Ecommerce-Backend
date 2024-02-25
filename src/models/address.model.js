@@ -18,10 +18,10 @@ const addressSchema = new Schema(
             type: String,
             required: true,
         },
-        country: {
-            type: String,
-            required: true,
-        },
+        // country: {
+        //     type: String,
+        //     required: true,
+        // },
         division: {
             type: String,
             required: true,
