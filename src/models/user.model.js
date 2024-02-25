@@ -50,6 +50,10 @@ const userSchema = mongoose.Schema(
             type: Number,
             default: 0,
         },
+        role: {
+            type: String,
+            default: 'user'
+        },
         verified: {
             type: Boolean,
             enum: ["True", "False"],
