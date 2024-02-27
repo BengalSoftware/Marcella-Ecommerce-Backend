@@ -167,10 +167,9 @@ module.exports.seller = async (req, res) => {
 
 
 // get single seller 
-module.exports.seller = async (req, res) => {
+module.exports.singleSeller = async (req, res) => {
     try {
-        const email = req.query.email;
-        console.log(email)
+        const email = req.params.email;
         const seller = await Seller.findOne({ email: email });
         const totalSeller = await Seller.findOne({ email: email }).countDocuments();
         if (seller) {
