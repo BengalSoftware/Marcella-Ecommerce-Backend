@@ -610,7 +610,7 @@ const createOrder = async (req, res) => {
 
         // Create a new order id
         const randomNum = Math.floor(Math.random() * 1000000);
-        const uniqueId = `BDB${randomNum}`;
+        const uniqueId = `MDL${randomNum}`;
 
         const fullOrder = {
             user: userCart.user,
@@ -731,7 +731,7 @@ function calculateQuantityAdjustment(currentStatus, newStatus) {
         currentStatus === "pending" &&
         (newStatus === "processing" ||
             newStatus == "delivered" ||
-            newStatus == "picked by courier")
+            newStatus == "shipped")
     ) {
         // Decrease quantity for processing, shipped, or delivered orders
         return -1;
@@ -740,7 +740,7 @@ function calculateQuantityAdjustment(currentStatus, newStatus) {
             currentStatus === "returned" ||
             currentStatus === "expired") &&
         (newStatus === "processing" ||
-            newStatus == "picked by courier" ||
+            newStatus == "shipped" ||
             newStatus == "delivered")
     ) {
         // Decrease quantity for new status as processing
@@ -748,7 +748,7 @@ function calculateQuantityAdjustment(currentStatus, newStatus) {
     } else if (
         (currentStatus === "processing" ||
             currentStatus === "delivered" ||
-            currentStatus === "picked by courier") &&
+            currentStatus === "shipped") &&
         (newStatus === "cancelled" ||
             newStatus === "returned" ||
             newStatus === "expired" ||

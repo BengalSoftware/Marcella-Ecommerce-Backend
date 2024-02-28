@@ -47,7 +47,7 @@ const orderSchema = Schema(
             enum: [
                 "pending",
                 "processing",
-                "picked by courier",
+                "shipped",
                 "cancelled",
                 "returned",
                 "delivered",
