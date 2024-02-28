@@ -58,7 +58,7 @@ router.get("/seller-products/:id", productController.getProductsBySellerId);
 // CREATE SINGLE PRODUCT - ADMIN
 router.post(
     "/",
-    authentication,
+    // authentication,
     upload.array("images", 5),
     productController.createProduct
 );

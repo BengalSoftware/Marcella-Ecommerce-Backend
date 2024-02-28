@@ -16,6 +16,9 @@ router.post("/seller", authController.seller);
 // DONE - GET single SELLER
 router.post("/seller/:email", authController.singleSeller);
 
+// DONE - GET SINGLE SELLER CLIENT
+router.post("/client-seller/:id", authController.singleSellerClient);
+
 // DONE - UPDATE SINGLE SELLER
 router.put("/seller/:id", authController.updateSeller);
 

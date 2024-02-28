@@ -647,10 +647,17 @@ const getProductsBySellerId = async (req, res) => {
         const data = await Product.find({
             sellerId: req.params.id,
         })
+        const totalProducts = await Product.find({
+            sellerId: req.params.id,
+        }).countDocuments()
         // .populate({ path: "manufacturer", select: "name" });
 
         res.status(200).json({
-            result: data,
+            result: {
+                totalProducts,
+                totalPageNumber,
+                data,
+            },
             message: "Success",
         });
     } catch (err) {

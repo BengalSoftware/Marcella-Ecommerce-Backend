@@ -191,6 +191,33 @@ module.exports.singleSeller = async (req, res) => {
 }
 
 
+
+// get single seller 
+module.exports.singleSellerClient = async (req, res) => {
+    try {
+        const id = req.params.id;
+        console.log(id)
+        const seller = await Seller.findOne({ _id: id });
+        const totalSeller = await Seller.findOne({ _id: id }).countDocuments();
+        if (seller) {
+            res.status(200).json({
+                message: 'Success',
+                totalSeller,
+                data: seller
+            })
+        } else {
+            res.status(404).json({
+                message: 'Server Side error'
+            })
+        }
+    } catch (error) {
+        res.status(500).json({
+            message: error.message
+        })
+    }
+}
+
+
 //UPDATE SINGLE SELLER  
 module.exports.updateSeller = async (req, res) => {
     try {
