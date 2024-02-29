@@ -655,7 +655,7 @@ const getProductsBySellerId = async (req, res) => {
         res.status(200).json({
             result: {
                 totalProducts,
-                totalPageNumber,
+                // totalPageNumber,
                 data,
             },
             message: "Success",

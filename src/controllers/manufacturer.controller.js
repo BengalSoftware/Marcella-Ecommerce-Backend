@@ -41,6 +41,16 @@ const getManufacturer = async (req, res) => {
 const createManufacturer = async (req, res) => {
     try {
         // console.log(req.body);
+        const path = req?.file?.path;
+        const uploader = async (pathUrl) =>
+            await cloudinary.uploads(pathUrl, "photoUrl");
+
+        // call the cloudinary function and get an array of url
+        let newUrl = "";
+        if (path) {
+            newUrl = await uploader(path);
+            fs.unlinkSync(path);
+        }
         const newManufacturer = new Manufacturer(req.body);
         const data = await newManufacturer.save();
         res.status(200).json({
@@ -51,6 +61,35 @@ const createManufacturer = async (req, res) => {
             error: "There was a server side error!",
         });
     }
+
+    // try {
+    //     const path = req.file.path;
+    //     // Upload image to Cloudinary
+    //     const result = await cloudinary.uploader.upload(path);
+
+    //     // Clean up: remove the temporary file
+    //     fs.unlinkSync(path);
+
+    //     // Now you can use the result.url to save to your database or do whatever you want
+    //     // For example, you can save the URL to your Manufacturer model
+
+    //     const newManufacturer = new Manufacturer({
+    //         ...req.body,
+    //         photoUrl: result.url // assuming you have a field in your Manufacturer model to store the image URL
+    //     });
+
+    //     await newManufacturer.save();
+
+    //     res.status(200).json({
+    //         message: "Image uploaded successfully!",
+    //         imageUrl: result.url
+    //     });
+    // } catch (err) {
+    //     console.error(err);
+    //     res.status(500).json({
+    //         error: "There was a server side error!"
+    //     });
+    // }
 };
 
 // TODO - CREATE MULTIPLE MANUFACTURERS
