@@ -64,7 +64,7 @@ router.post(
 );
 
 // DONE - GET SINGLE PRODUCT by ID - ADMIN
-router.get("/admin/:id", authentication, productController.getProductAdmin);
+router.get("/admin/:id", productController.getProductAdmin);
 
 // DONE - GET SINGLE PRODUCT by ID - CLIENT
 router.get("/:name", productController.getProduct);
@@ -72,7 +72,6 @@ router.get("/:name", productController.getProduct);
 // DONE - UPDATE SINGLE PRODUCT - ADMIN
 router.put(
     "/:id",
-    authentication,
     upload.array("images", 5),
     productController.updateProduct
 );
