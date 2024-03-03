@@ -276,6 +276,7 @@ router.post("/cartAdd/:email", async (req, res) => {
                         products: [
                             {
                                 product: req.body.product,
+                                sellerId: req.body.sellerId,
                                 quantity: req.body?.quantity || 1,
                                 offerPrice: dbProduct.offerPrice,
                                 color: req.body?.color,

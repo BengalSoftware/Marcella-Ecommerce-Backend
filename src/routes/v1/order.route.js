@@ -4,7 +4,7 @@ const router = express.Router();
 const orderController = require("../../controllers/order.controller");
 
 // DONE - GET ALL ORDERS - ADMIN
-router.get("/", authentication, orderController.getOrders);
+router.get("/", orderController.getOrders);
 
 // DONE - GET Filter ALL ORDERS - ADMIN
 router.get("/filterOrder", authentication, orderController.filterOrder);
