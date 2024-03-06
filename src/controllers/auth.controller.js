@@ -4,6 +4,7 @@ const { transport } = require("../config/mailTransport");
 const bcrypt = require("bcryptjs");
 const ejs = require("ejs");
 const Seller = require("../models/seller.model");
+const { default: mongoose } = require("mongoose");
 
 // NEW USER REGISTER CONTROLLER -> USER
 module.exports.register = async (req, res) => {
@@ -196,24 +197,27 @@ module.exports.singleSeller = async (req, res) => {
 module.exports.singleSellerClient = async (req, res) => {
     try {
         const id = req.params.id;
-        console.log(id)
-        const seller = await Seller.findOne({ _id: id });
-        const totalSeller = await Seller.findOne({ _id: id }).countDocuments();
+        let seller;
+        if (mongoose.Types.ObjectId.isValid(id)) {
+            seller = await Seller.findById(id);
+        } else {
+            seller = await Seller.findOne({ slug: id });
+        }
+
         if (seller) {
             res.status(200).json({
                 message: 'Success',
-                totalSeller,
                 data: seller
-            })
+            });
         } else {
             res.status(404).json({
-                message: 'Server Side error'
-            })
+                message: 'Seller not found'
+            });
         }
     } catch (error) {
         res.status(500).json({
             message: error.message
-        })
+        });
     }
 }
 
