@@ -47,6 +47,10 @@ const footer = require("./footer.route");
 const flashSaleTypes = require("./flashSaleTypes.route");
 const sslRoutes = require("./sslcommerz.route");
 
+
+//layout route
+const layoutRoutes = require('./layout.route')
+
 //-----
 const router = require("express").Router();
 
@@ -208,6 +212,10 @@ const defaultRoutes = [
     {
         path: "/ssl",
         handler: sslRoutes,
+    },
+    {
+        path: "/layout",
+        handler: layoutRoutes,
     },
 ];
 
