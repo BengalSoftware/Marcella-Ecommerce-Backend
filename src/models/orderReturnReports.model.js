@@ -11,9 +11,15 @@ const orderReportsSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
-        product: {
-            type: String,
-        },
+        products: [
+            {
+                product: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: "Product",
+                    required: true,
+                },
+            }
+        ],
         reason: {
             type: String,
             required: true,

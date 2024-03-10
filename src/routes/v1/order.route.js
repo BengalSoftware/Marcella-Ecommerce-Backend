@@ -78,7 +78,7 @@ router.get(
 router.get("/user/:email", orderController.getOrdersByUserId);
 
 // GET SINGLE ORDER by ID - ADMIN
-router.get("/:id", authentication, orderController.getOrder);
+router.get("/:id", orderController.getOrder);
 
 // CREATE SINGLE ORDER - CLIENT
 router.post("/:email", orderController.createOrder);

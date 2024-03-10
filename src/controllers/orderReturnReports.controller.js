@@ -12,6 +12,7 @@ const getAllReports = async (req, res) => {
         queries.limit = parseInt(limit);
 
         const data = await OrderReports.find({})
+            .populate('products.product')
             .sort({ createdAt: -1 })
             .limit(queries.limit)
             .skip(queries.skip);

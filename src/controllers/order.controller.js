@@ -31,6 +31,7 @@ const getOrders = async (req, res) => {
 
         // final searching
         const data = await Order.find({ $and: filterArr })
+            .populate('products.product')
             .skip(queries.skip)
             .limit(queries.limit)
             .populate("user")
