@@ -51,6 +51,9 @@ const sslRoutes = require("./sslcommerz.route");
 //layout route
 const layoutRoutes = require('./layout.route')
 
+//transaction route
+const transcationRoute = require('./transaction.route')
+
 //-----
 const router = require("express").Router();
 
@@ -216,6 +219,10 @@ const defaultRoutes = [
     {
         path: "/layout",
         handler: layoutRoutes,
+    },
+    {
+        path: "/transaction",
+        handler: transcationRoute,
     },
 ];
 

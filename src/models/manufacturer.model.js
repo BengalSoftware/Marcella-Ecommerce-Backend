@@ -11,8 +11,6 @@ const manufacturerSchema = mongoose.Schema(
     },
     image: {
       type: String,
-      default:
-        "https://i.ibb.co/QKdm1pQ/png-transparent-user-profile-default-computer-icons-network-video-recorder-avatar-cartoon-maker-blue.png",
     },
   },
   {
