@@ -70,7 +70,7 @@ router.get(
 // GET ORDERS by SALES STATUS (pending, processing, delivered....etc) - ADMIN
 router.get(
     "/status/:status",
-    authentication,
+    // authentication,
     orderController.getOrdersOnStatus
 );
 
@@ -88,6 +88,9 @@ router.post("/:email", orderController.createOrder);
 
 // UPDATE SINGLE ORDER - ADMIN
 router.put("/:id", authentication, orderController.updateOrder);
+
+//update payment order ADMIN
+router.put("/:orderId/products/:productId/transaction",  orderController.updatePaymentOrder);
 
 // DELETE SINGLE ORDER - ADMIN
 router.delete("/:id", authentication, orderController.deleteOrder);

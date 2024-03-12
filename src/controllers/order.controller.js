@@ -709,6 +709,45 @@ const updateOrder = async (req, res) => {
     }
 };
 
+
+
+
+// update single order by paymnet 
+
+const updatePaymentOrder = async (req, res) => {
+    try {
+        const { orderId, productId } = req.params;
+        const { transactionNumber, paymentStatus, transactionType } = req.body;
+        const order = await Order.findById(orderId);
+        if (!order) {
+            return res.status(404).json({ error: 'Order not found' });
+        }
+        const product = order.products.find(prod => prod._id.toString() === productId);
+
+        if (!product) {
+            return res.status(404).json({ error: 'Product not found in the order' });
+        }
+
+        if (transactionNumber) {
+            product.transactionNumber = transactionNumber;
+        }
+        if (paymentStatus) {
+            product.paymentStatus = paymentStatus;
+        }
+        if (transactionType) {
+            product.transactionType = transactionType;
+        }
+
+        await order.save();
+
+        return res.json({ message: 'Transaction details updated successfully', order });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'Server Error' });
+    }
+
+}
+
 // UPDATE MULTIPLE ORDERS
 
 // DELETE SINGLE ORDER
@@ -833,4 +872,5 @@ module.exports = {
     getTotalSaleByMonth,
     getTotalOrdersByMonth,
     getTotalOrdersByYear,
+    updatePaymentOrder
 };

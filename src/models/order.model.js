@@ -38,6 +38,20 @@ const orderSchema = Schema(
                     type: Number,
                     required: true,
                 },
+                transactionNumber: {
+                    type: String,
+                },
+                transactionType: {
+                    type: String,
+                },
+                paymentStatus: {
+                    type: String,
+                    enum: [
+                        "unpaid",
+                        "paid"
+                    ],
+                    default: "unpaid",
+                },
                 color: String,
                 size: String,
             },
