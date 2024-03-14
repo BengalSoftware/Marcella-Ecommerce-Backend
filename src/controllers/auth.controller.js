@@ -5,6 +5,9 @@ const bcrypt = require("bcryptjs");
 const ejs = require("ejs");
 const Seller = require("../models/seller.model");
 const { default: mongoose } = require("mongoose");
+const cloudinary = require("../config/cloudinary");
+
+const fs = require("fs");
 
 // NEW USER REGISTER CONTROLLER -> USER
 module.exports.register = async (req, res) => {
@@ -226,9 +229,29 @@ module.exports.singleSellerClient = async (req, res) => {
 module.exports.updateSeller = async (req, res) => {
     try {
         const id = req.params.id;
-        const updatedData = req.body;
-        const seller = await Seller.findByIdAndUpdate(id, updatedData, { new: true });
+        // const updatedData = req.body;
 
+
+
+        const path = req?.file?.path;
+        const uploader = async (pathUrl) =>
+            await cloudinary.uploads(pathUrl, "profileUrl");
+
+        // call the cloudinary function and get an array of url
+        let newUrl = "";
+        if (path) {
+            newUrl = await uploader(path);
+            fs.unlinkSync(path);
+        }
+        const updateObject = {};
+        if (req.body.name) updateObject.name = req.body.name;
+        if (req.body.phone) updateObject.phone = req.body.phone;
+        if (req.body.email) updateObject.email = req.body.email;
+        if (req.body.metaTitle) updateObject.metaTitle = req.body.metaTitle;
+        if (req.body.metaDescription) updateObject.metaDescription = req.body.metaDescription;
+        if (newUrl.url) updateObject.profileUrl = newUrl.url;
+        
+        const seller = await Seller.findByIdAndUpdate(id, updateObject, { new: true });
         if (seller) {
             res.status(200).json({
                 message: 'Seller updated successfully',

@@ -10,6 +10,12 @@ const sellerSchema = new mongoose.Schema({
         minLength: [3, "name must be at least 3 characters long"],
         maxLength: [100, "Name must be at most 100 characters long"],
     },
+    profileUrl: {
+        type: String
+    },
+    coverUrl: {
+        type: String
+    },
     slug: {
         type: String,
         required: [true, "slug name is required"],
@@ -68,6 +74,12 @@ const sellerSchema = new mongoose.Schema({
         type: String,
         enum: ["active", "pending"],
         default: 'pending'
+    },
+    metaTitle: {
+        type: String
+    },
+    metaDescription: {
+        type: String
     }
 }, { timestamps: true });
 
