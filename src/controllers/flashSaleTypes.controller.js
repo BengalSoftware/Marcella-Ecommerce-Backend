@@ -1,4 +1,6 @@
 const FlashSaleType = require("../models/flashSaleTypes.model");
+const cloudinary = require("../config/cloudinary");
+const fs = require("fs");
 
 const getAllFlashSaleType = async (req, res) => {
     try {
@@ -36,18 +38,28 @@ const getSingleFlashSaleType = async (req, res) => {
 
 const createFlashSaleType = async (req, res) => {
     try {
-        if (!req.body.name) {
-            return res.status(404).json({
-                message: "All filed is required",
-            });
+        let newUrl = {};
+        if (req.file?.path) {
+            // console.log(req.body);
+            const path = req.file.path;
+            const uploader = async (pathUrl) =>
+                await cloudinary.uploads(pathUrl, "flashtype");
+
+            // call the cloudinary function and get an array of url
+            newUrl = await uploader(path);
+            fs.unlinkSync(path);
         }
-        const data = new FlashSaleType({
-            name: req.body.name,
-        });
+
+        const addFlashTypeObjects = { ...req.body };
+        if (req.body.name) addFlashTypeObjects.name = req.body.name;
+        if (newUrl?.url) addFlashTypeObjects.image = newUrl.url;
+
+        const data = FlashSaleType(addFlashTypeObjects);
         await data.save();
+        
 
         res.status(200).json({
-            message: "Success fully added FlashSaleType",
+            message: "Success fully added flash sale type",
         });
     } catch (error) {
         console.log(error);
@@ -59,23 +71,32 @@ const createFlashSaleType = async (req, res) => {
 //  update single FlashSaleType
 const updateSingleFlashSaleType = async (req, res) => {
     try {
-        if (!req.params.id) {
+        const dbFlashSaleType = await FlashSaleType.findOne({ _id: req.params.id });
+        if (!req.params.id || !dbFlashSaleType) {
             return res.status(404).json({
-                message: "Id is required",
+                message: "Id is required/valid",
             });
         }
-        await FlashSaleType.findByIdAndUpdate(
-            { _id: req.params.id },
-            {
-                $set: req.body,
-            },
-            {
-                new: true,
-            }
-        );
+
+        let newUrl = {};
+        if (req.file?.path) {
+            const path = req.file.path;
+            const uploader = async (pathUrl) =>
+                await cloudinary.uploads(pathUrl, "flashtype");
+
+            // call the cloudinary function and get an array of url
+            newUrl = await uploader(path);
+            fs.unlinkSync(path);
+        }
+
+        
+        if (req.body.name) dbFlashSaleType.name = req.body.name;
+        if (newUrl?.url) dbFlashSaleType.image = newUrl.url;
+
+        await dbFlashSaleType.save();
 
         res.status(200).json({
-            message: "Success fully updated FlashSaleType",
+            message: "Success fully updated flashtype",
         });
     } catch (error) {
         console.log(error);
