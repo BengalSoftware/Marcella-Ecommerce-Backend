@@ -2,6 +2,7 @@ const express = require('express');
 const { authentication } = require('../../config/Authenticate');
 const manufacturerController = require('../../controllers/manufacturer.controller');
 const router = express.Router();
+const upload = require("../../utils/uploadFiles");
 
 // DONE - GET ALL MANUFACTURERS - NONE
 router.get('/', manufacturerController.getManufacturers);
@@ -13,13 +14,19 @@ router.get('/:id', manufacturerController.getManufacturer);
 // router.get('/',);
 
 // DONE - CREATE SINGLE MANUFACTURER - ADMIN
-router.post('/', authentication, manufacturerController.createManufacturer);
+router.post('/',
+    authentication,
+    upload.single("image"),
+    manufacturerController.createManufacturer);
 
 // CREATE MULTIPLE MANUFACTURER
 // router.post('/all',);
 
 // DONE - UPDATE SINGLE MANUFACTURER - ADMIN
-router.put('/:id', authentication, manufacturerController.updateManufacturer);
+router.put('/:id',
+    authentication,
+    upload.single("image"),
+    manufacturerController.updateManufacturer);
 
 // UPDATE MULTIPLE MANUFACTURERS - ADMIN
 

@@ -1,5 +1,7 @@
 const slugify = require("slugify");
 const Manufacturer = require("../models/manufacturer.model");
+const cloudinary = require("../config/cloudinary");
+const fs = require("fs");
 
 // COMPLETE - GET ALL MANUFACTURERS
 const getManufacturers = async (req, res) => {
@@ -40,56 +42,35 @@ const getManufacturer = async (req, res) => {
 // DONE - CREATE SINGLE MANUFACTURER
 const createManufacturer = async (req, res) => {
     try {
-        // console.log(req.body);
-        const path = req?.file?.path;
-        const uploader = async (pathUrl) =>
-            await cloudinary.uploads(pathUrl, "photoUrl");
+        let newUrl = {};
+        if (req.file?.path) {
+            // console.log(req.body);
+            const path = req.file.path;
+            const uploader = async (pathUrl) =>
+                await cloudinary.uploads(pathUrl, "manufacturer");
 
-        // call the cloudinary function and get an array of url
-        let newUrl = "";
-        if (path) {
+            // call the cloudinary function and get an array of url
             newUrl = await uploader(path);
             fs.unlinkSync(path);
         }
-        const newManufacturer = new Manufacturer(req.body);
-        const data = await newManufacturer.save();
+
+        const addManufacturerObjects = { ...req.body };
+        if (req.body.name) addManufacturerObjects.name = req.body.name;
+        if (newUrl?.url) addManufacturerObjects.image = newUrl.url;
+
+        const data = Manufacturer(addManufacturerObjects);
+        await data.save();
+        
+
         res.status(200).json({
-            message: "Manufacturer created successfully!",
+            message: "Success fully added manufacturer",
         });
-    } catch (err) {
+    } catch (error) {
+        console.log(error);
         res.status(500).json({
-            error: "There was a server side error!",
+            message: "There was a server side error",
         });
     }
-
-    // try {
-    //     const path = req.file.path;
-    //     // Upload image to Cloudinary
-    //     const result = await cloudinary.uploader.upload(path);
-
-    //     // Clean up: remove the temporary file
-    //     fs.unlinkSync(path);
-
-    //     // Now you can use the result.url to save to your database or do whatever you want
-    //     // For example, you can save the URL to your Manufacturer model
-
-    //     const newManufacturer = new Manufacturer({
-    //         ...req.body,
-    //         photoUrl: result.url // assuming you have a field in your Manufacturer model to store the image URL
-    //     });
-
-    //     await newManufacturer.save();
-
-    //     res.status(200).json({
-    //         message: "Image uploaded successfully!",
-    //         imageUrl: result.url
-    //     });
-    // } catch (err) {
-    //     console.error(err);
-    //     res.status(500).json({
-    //         error: "There was a server side error!"
-    //     });
-    // }
 };
 
 // TODO - CREATE MULTIPLE MANUFACTURERS
@@ -97,24 +78,38 @@ const createManufacturer = async (req, res) => {
 // UPDATE SINGLE MANUFACTURER
 const updateManufacturer = async (req, res) => {
     try {
-        const result = await Manufacturer.findByIdAndUpdate(
-            {
-                _id: req.params.id,
-            },
-            {
-                $set: req.body,
-            },
-            {
-                new: true,
-                useFindAndModify: false,
-            }
-        );
+        const dbManufacturer = await Manufacturer.findOne({ _id: req.params.id });
+        if (!req.params.id || !dbManufacturer) {
+            return res.status(404).json({
+                message: "Id is required/valid",
+            });
+        }
+
+        let newUrl = {};
+        if (req.file?.path) {
+            const path = req.file.path;
+            const uploader = async (pathUrl) =>
+                await cloudinary.uploads(pathUrl, "manufacturer");
+
+            // call the cloudinary function and get an array of url
+            newUrl = await uploader(path);
+            fs.unlinkSync(path);
+        }
+
+        
+        if (req.body.name) dbManufacturer.name = req.body.name;
+        if (req.body.description) dbManufacturer.description = req.body.description;
+        if (newUrl?.url) dbManufacturer.image = newUrl.url;
+
+        await dbManufacturer.save();
+
         res.status(200).json({
-            message: "Manufacturer updated successfully!",
+            message: "Success fully updated manufacturer",
         });
-    } catch (err) {
+    } catch (error) {
+        console.log(error);
         res.status(500).json({
-            error: "There was a server side error!",
+            message: "There was a server side error",
         });
     }
 };
