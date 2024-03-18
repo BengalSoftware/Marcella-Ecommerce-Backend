@@ -68,7 +68,49 @@ const getStoreLayout = async (req, res) => {
     }
 }
 
+
+
+//update store layout
+
+const updateStoreLayout = async (req, res) => {
+    try {
+        const dbStoreLayout = await StoreLayout.findOne({ _id: req.params.id });
+        if (!req.params.id || !dbStoreLayout) {
+            return res.status(404).json({
+                message: "Id is required/valid",
+            });
+        }
+
+        let newUrl = {};
+        if (req.file?.path) {
+            const path = req.file.path;
+            const uploader = async (pathUrl) =>
+                await cloudinary.uploads(pathUrl, "StoreLayout");
+
+            // call the cloudinary function and get an array of url
+            newUrl = await uploader(path);
+            fs.unlinkSync(path);
+        }
+
+        if (req.body.layout) dbStoreLayout.layout = req.body.layout;
+        if (req.body.products) dbStoreLayout.products.push(req.body.products);
+        if (newUrl?.url) dbStoreLayout.images = newUrl.url;
+
+        await dbStoreLayout.save();
+
+        res.status(200).json({
+            message: "Success fully updated store layout",
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: "There was a server side error",
+        });
+    }
+}
+
 module.exports = {
     createStoreLayout,
-    getStoreLayout
+    getStoreLayout,
+    updateStoreLayout
 }

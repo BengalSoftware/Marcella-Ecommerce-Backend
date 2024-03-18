@@ -9,6 +9,10 @@ router.post("/:email",
     upload.array("images", 2),
     storeLayoutController.createStoreLayout);
 
+router.put("/:id",
+    upload.array("images", 2),
+    storeLayoutController.updateStoreLayout);
+
 router.get("/:email",
     storeLayoutController.getStoreLayout);
 
