@@ -50,6 +50,7 @@ const sslRoutes = require("./sslcommerz.route");
 
 //layout route
 const layoutRoutes = require('./layout.route')
+const storeLayoutRoutes = require('./storelayout.route')
 
 
 //-----
@@ -217,6 +218,10 @@ const defaultRoutes = [
     {
         path: "/layout",
         handler: layoutRoutes,
+    },
+    {
+        path: "/store-layout",
+        handler: storeLayoutRoutes,
     },
 ];
 
