@@ -79,7 +79,22 @@ router.get("/myCart/:email", async (req, res) => {
                     upazila: { $in: "Outside Dhaka" },
                 });
             }
+
         }
+
+        // free shipping price
+        const isExistFreeShipping = await Product.findOne({ freeShipping: true });
+
+        let finalShippingPrice;
+        if (isExistFreeShipping && shippingPriceData?.price) {
+            finalShippingPrice = shippingPriceData?.price
+        } else if (isExistFreeShipping) {
+            finalShippingPrice = 0;
+        } else {
+            finalShippingPrice = shippingPriceData?.price;
+        }
+
+
 
         // check this user has already any order previously
         const isFirstOrder = await Order.findOne({ user: userId });
@@ -170,7 +185,7 @@ router.get("/myCart/:email", async (req, res) => {
                         discount: `${coupon?.discount}${coupon?.discountType === "percentage" ? "%" : "TK"
                             }`,
                         discountAmount: Math.round(totalDiscount),
-                        shippingCharge: shippingPriceData?.price,
+                        shippingCharge: finalShippingPrice,
                         total: Math.round(total),
                         cartData: cart,
                         totalQuantity: totalQuantity || 0,
@@ -185,7 +200,7 @@ router.get("/myCart/:email", async (req, res) => {
                         //  it will be show when coupon applied but total amount is less than coupon total price
                         activateCoupon: coupon?.totalAmount - subTotalPrice,
 
-                        shippingCharge: shippingPriceData?.price,
+                        shippingCharge: finalShippingPrice,
                         total: Math.round(total),
                         cartData: cart,
                         totalQuantity: totalQuantity || 0,
@@ -202,7 +217,7 @@ router.get("/myCart/:email", async (req, res) => {
                         ? "% for first time order"
                         : "TK for first time order"
                         }`,
-                    shippingCharge: shippingPriceData?.price,
+                    shippingCharge: finalShippingPrice,
                     total: Math.round(total),
                     cartData: cart,
                     totalQuantity: totalQuantity || 0,

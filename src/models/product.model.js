@@ -182,6 +182,10 @@ const productSchema = Schema(
                 );
             },
         },
+        freeShipping: {
+            type: Boolean,
+            default: false
+        }
     },
     {
         timestamps: true,
