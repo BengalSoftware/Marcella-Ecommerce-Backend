@@ -26,6 +26,7 @@ const getProducts = async (req, res) => {
         const qQuantity = req.query.quantity;
         const qModel = req.query.model;
         const qDate = req.query.date;
+        const qFreeShipping = req.query.freeShipping;
 
         // queries for products
         const queries = {};
@@ -46,7 +47,7 @@ const getProducts = async (req, res) => {
         // }
 
         // page calculation
-        const { page = 1, limit = 25 } = req.query || {};
+        const { page = 1, limit = 10 } = req.query || {};
         const skip = (page - 1) * parseInt(limit);
         queries.skip = skip;
         queries.limit = parseInt(limit);
@@ -128,6 +129,7 @@ const getProducts = async (req, res) => {
             }
         }
         if (qQuantity) filterArr.push({ quantity: qQuantity });
+        if (qFreeShipping) filterArr.push({ freeShipping: qFreeShipping });
         if (qStatus)
             filterArr.push({
                 status: {
@@ -171,7 +173,7 @@ const getProducts = async (req, res) => {
             // .select(queries.fields)
             .sort(queries.sortBy)
             .populate({ path: "manufacturer", select: "name" })
-            // .pupulate({ path: 'sellerId', select: 'slug' })
+        // .pupulate({ path: 'sellerId', select: 'slug' })
 
         const totalProducts = await Product.countDocuments({ $and: filterArr });
         // const totalProductsByFilter = await Product.countDocuments(filters);
