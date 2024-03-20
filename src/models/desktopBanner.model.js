@@ -17,7 +17,12 @@ const desktopBannerSchema = mongoose.Schema(
             type: String,
             enum: ["product", "category"],
         },
-
+        campaignProducts: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Product",
+            },
+        ],
         // product url
         product: String,
         slug: {

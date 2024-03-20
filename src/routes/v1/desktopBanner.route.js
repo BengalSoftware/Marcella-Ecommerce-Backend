@@ -27,7 +27,7 @@ router.put(
 );
 
 //GET SINGLE DESKTOP BANNER
-router.get("/:slug", authentication, desktopBannerController.getSingleBanner);
+router.get("/:slug", desktopBannerController.getSingleBanner);
 
 // DELETE A SINGLE DESKTOP BANNER IMAGE -> ADMIN
 router.delete(
