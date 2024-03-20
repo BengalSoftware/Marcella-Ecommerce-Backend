@@ -29,6 +29,11 @@ router.get(
 );
 
 router.get(
+    "/gallery-images",
+    productController.getProductImages
+);
+
+router.get(
     "/campaignProducts/:campaignId",
     productController.getCampaignProducts
 );

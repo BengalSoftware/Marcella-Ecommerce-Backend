@@ -195,6 +195,33 @@ const getProducts = async (req, res) => {
     }
 };
 
+
+
+// GET IMAGE GALLERY 
+const getProductImages = async (req, res) => {
+    try {
+        const { page = 1, limit = 40 } = req.query || {};
+        const skip = (page - 1) * parseInt(limit);
+        // queries.skip = skip;
+        // queries.limit = parseInt(limit);
+
+        const data = await Product.find()
+            .select("images")
+            .skip(skip)
+            .limit(parseInt(limit))
+            .sort({ createdAt: -1 })
+
+        res.status(200).json({
+            message: "Success",
+            data,
+        });
+    } catch (error) {
+        res.status(500).json({ message: "There was a server side error" });
+    }
+};
+
+
+
 // ADMIN -> GET FLASH PRODUCTS BY FILTER
 const getFlashProductsAdmin = async (req, res) => {
     try {
@@ -820,7 +847,11 @@ const createProduct = async (req, res) => {
                 updateProductObject.offerPrice = req.body.price;
             }
 
+            if (req.body.libraryUrls) {
+                JSON.parse(req.body.libraryUrls).map(u => urls.push(u))
+            }
             updateProductObject.images = urls;
+
             if (req.body.tags)
                 updateProductObject.tags = JSON.parse(req.body?.tags);
             if (req.body.color)
@@ -894,6 +925,7 @@ const updateProduct = async (req, res) => {
         const updateProductObject = {
             ...req.body,
         };
+        
 
         if (req.body.offerPrice) {
             updateProductObject.offerPrice = req.body.offerPrice;
@@ -905,7 +937,9 @@ const updateProduct = async (req, res) => {
         } else if (req.body.price) {
             updateProductObject.offerPrice = req.body.price;
         }
-
+        if (req.body.libraryUrls) {
+            JSON.parse(req.body.libraryUrls).map(u => newImageUrls.push(u))
+        }
         updateProductObject.images = newImageUrls;
         if (req.body.tags) updateProductObject.tags = JSON.parse(req.body.tags);
         if (req.body.color)
@@ -1050,6 +1084,7 @@ cron.schedule("*/10 * * * * *", async () => {
 });
 
 module.exports = {
+    getProductImages,
     getProducts,
     getFlashProductsAdmin,
     getLowQuantityProducts,
