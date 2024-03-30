@@ -8,6 +8,7 @@ const subcategoryRoute = require("./subcategory.route");
 const subcategoryChildrenRoute = require("./subcategoryChildren.route");
 const categoryRoute = require("./category.route");
 const productRoute = require("./product.route");
+const productTypeRoute = require("./productType.route");
 const cartRoute = require("./cart.route");
 const userGroupRoute = require("./userGroup.route");
 const adminRoute = require("./admin.route");
@@ -96,6 +97,10 @@ const defaultRoutes = [
     {
         path: "/product",
         handler: productRoute,
+    },
+    {
+        path: "/product-type",
+        handler: productTypeRoute,
     },
 
     {
