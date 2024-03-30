@@ -11,6 +11,7 @@ const manufacturerSchema = mongoose.Schema(
     },
     image: {
       type: String,
+      default: 'https://i.ibb.co/Kys7p3C/brand.webp'
     },
   },
   {
