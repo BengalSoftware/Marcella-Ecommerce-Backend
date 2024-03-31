@@ -171,7 +171,7 @@ const getProducts = async (req, res) => {
             .skip(queries.skip)
             .limit(queries.limit)
             // .select(queries.fields)
-            .sort(queries.sortBy)
+            .sort({ createdAt: -1, ...queries.sortBy })
             .populate({ path: "manufacturer", select: "name" })
         // .pupulate({ path: 'sellerId', select: 'slug' })
 
