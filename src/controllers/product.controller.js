@@ -11,6 +11,7 @@ const bottomBanner = require("../models/bottomBanner.model");
 const sideBanner = require("../models/sideBanner.model");
 const relatedBanner = require("../models/relatedBanner.model");
 const cron = require("node-cron");
+const Manufacturer = require("../models/manufacturer.model");
 
 // GET ALL PRODUCTS -> CLIENT
 const getProducts = async (req, res) => {
@@ -27,6 +28,7 @@ const getProducts = async (req, res) => {
         const qModel = req.query.model;
         const qDate = req.query.date;
         const qFreeShipping = req.query.freeShipping;
+        const qBrand = req.query.brand;
 
         // queries for products
         const queries = {};
@@ -130,6 +132,10 @@ const getProducts = async (req, res) => {
         }
         if (qQuantity) filterArr.push({ quantity: qQuantity });
         if (qFreeShipping) filterArr.push({ freeShipping: qFreeShipping });
+        if (qBrand) {
+            const brand = await Manufacturer.findOne({ slug: qBrand })
+            filterArr.push({ manufacturer: brand._id })
+        };
         if (qStatus)
             filterArr.push({
                 status: {

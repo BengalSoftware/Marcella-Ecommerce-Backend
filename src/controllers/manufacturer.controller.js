@@ -56,6 +56,15 @@ const createManufacturer = async (req, res) => {
 
         const addManufacturerObjects = { ...req.body };
         if (req.body.name) addManufacturerObjects.name = req.body.name;
+        // Assuming req.body.name contains the name from the request body
+        if (req.body.name) {
+            const slug = req.body.name
+                .replace(/[^\w\s]/gi, '')
+                .toLowerCase()
+                .replace(/\s+/g, '-');
+            addManufacturerObjects.slug = slug;
+        }
+
         if (newUrl?.url) addManufacturerObjects.image = newUrl.url;
 
         const data = Manufacturer(addManufacturerObjects);
@@ -96,7 +105,7 @@ const updateManufacturer = async (req, res) => {
             fs.unlinkSync(path);
         }
 
-        
+
         if (req.body.name) dbManufacturer.name = req.body.name;
         if (req.body.description) dbManufacturer.description = req.body.description;
         if (newUrl?.url) dbManufacturer.image = newUrl.url;
