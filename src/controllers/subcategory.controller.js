@@ -22,20 +22,30 @@ const getFilterSubcategories = async (req, res) => {
     try {
         const { parent } = req.query || {};
         let data = [];
-        if (parent) {
-            data = await Subcategory.find({ parent: parent }).populate(
-                "parent children"
-            );
+
+        if (parent !== undefined) {
+            if (Array.isArray(parent)) {
+                data = await Subcategory.find({ parent: { $in: parent } }).populate('parent children');
+            } else {
+                data = await Subcategory.find({ parent }).populate('parent children');
+            }
+
             res.status(200).json({
                 result: data,
-                message: "Success",
+                message: 'Success',
+            });
+        } else {
+            res.status(400).json({
+                error: 'Parent categories not provided in the request query.',
             });
         }
     } catch (err) {
+        console.error(err);
         res.status(500).json({
-            error: "There was a server side error!",
+            error: 'There was a server-side error!',
         });
     }
+
 };
 
 // COMPLETE - GET SINGLE SUBCATEGORY by ID
