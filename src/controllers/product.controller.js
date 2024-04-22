@@ -49,7 +49,7 @@ const getProducts = async (req, res) => {
         // }
 
         // page calculation
-        const { page = 1, limit = 10 } = req.query || {};
+        const { page = 1, limit = 18 } = req.query || {};
         const skip = (page - 1) * parseInt(limit);
         queries.skip = skip;
         queries.limit = parseInt(limit);
@@ -636,13 +636,13 @@ const getRelatedProductsByProductId = async (req, res) => {
         if (!dbProduct) {
             return res.status(200).json({ error: "Product not found" });
         }
-
-        const categoryIds = dbProduct.categories.map(
+        console.log(dbProduct)
+        const categoryIds = dbProduct.subcategories.map(
             (category) => category._id
         );
 
         const data = await Product.find({
-            "categories._id": { $in: categoryIds },
+            "subcategories._id": { $in: categoryIds },
             _id: { $ne: dbProduct._id },
         });
 
@@ -931,7 +931,7 @@ const updateProduct = async (req, res) => {
         const updateProductObject = {
             ...req.body,
         };
-        
+
 
         if (req.body.offerPrice) {
             updateProductObject.offerPrice = req.body.offerPrice;
