@@ -148,8 +148,11 @@ router.get("/myCart/:email", async (req, res) => {
         }
 
         // if shipping available the add total price with shipping charge
-        if (shippingPriceData) {
+        if (isExistFreeShipping?.includes(false) && shippingPriceData?.price) {
             total += shippingPriceData?.price;
+        }
+        else if (isExistFreeShipping) {
+            total += 0;
         }
 
         const coupon = cart?.couponDiscount || null;
