@@ -248,6 +248,8 @@ module.exports.updateSeller = async (req, res) => {
         if (req.body.phone) updateObject.phone = req.body.phone;
         if (req.body.email) updateObject.email = req.body.email;
         if (req.body.metaTitle) updateObject.metaTitle = req.body.metaTitle;
+        if (req.body.address) updateObject.address = req.body.address;
+        if (req.body.status) updateObject.status = req.body.status;
         if (req.body.metaDescription) updateObject.metaDescription = req.body.metaDescription;
         if (newUrl.url) updateObject.profileUrl = newUrl.url;
         

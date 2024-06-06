@@ -9,6 +9,10 @@ const manufacturerSchema = mongoose.Schema(
     description: {
       type: String,
     },
+    slug: {
+      type: String,
+      required: true
+    },
     image: {
       type: String,
       default: 'https://i.ibb.co/Kys7p3C/brand.webp'

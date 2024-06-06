@@ -42,7 +42,7 @@ const getAllBannerName = async (req, res) => {
 //GET SINGLE BANNER
 const getSingleBanner = async (req, res) => {
     try {
-        const data = await desktopBannerImage.findOne({ $or: [{ slug: req.params.slug }, { _id: req.params.slug }] }).populate('campaignProducts');
+        const data = await desktopBannerImage.findOne({ slug: req.params.slug }).populate('campaignProducts');
 
         res.status(200).json({
             message: "Desktop banner found successfully",
@@ -83,6 +83,9 @@ const postDesktopBanner = async (req, res) => {
         if (req.body.campaignProducts) updateObject.campaignProducts = JSON.parse(req.body.campaignProducts);
         if (req.body.slug) {
             updateObject.slug = req.body.slug;
+        }
+        if (req.body.url) {
+            updateObject.url = req.body.url;
         }
 
         if (req.body?.categories)
@@ -139,6 +142,9 @@ const updateDesktopBanner = async (req, res) => {
         }
         if (req.body.slug) {
             updateObject.slug = req.body.slug;
+        }
+        if (req.body.url) {
+            updateObject.url = req.body.url;
         }
         if (req.body.campaignProducts) updateObject.campaignProducts = JSON.parse(req.body.campaignProducts);
         if (req.body?.categories)

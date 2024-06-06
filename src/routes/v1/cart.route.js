@@ -83,17 +83,16 @@ router.get("/myCart/:email", async (req, res) => {
         }
 
         // free shipping price
-        const isExistFreeShipping = await Product.findOne({ freeShipping: true });
+        const isExistFreeShipping = await cart?.products?.map((pro) => pro?.product?.freeShipping === true);
 
         let finalShippingPrice;
-        if (isExistFreeShipping && shippingPriceData?.price) {
+        if (isExistFreeShipping?.includes(false) && shippingPriceData?.price) {
             finalShippingPrice = shippingPriceData?.price
         } else if (isExistFreeShipping) {
             finalShippingPrice = 0;
         } else {
             finalShippingPrice = shippingPriceData?.price;
         }
-
 
 
         // check this user has already any order previously
@@ -149,8 +148,11 @@ router.get("/myCart/:email", async (req, res) => {
         }
 
         // if shipping available the add total price with shipping charge
-        if (shippingPriceData) {
+        if (isExistFreeShipping?.includes(false) && shippingPriceData?.price) {
             total += shippingPriceData?.price;
+        }
+        else if (isExistFreeShipping) {
+            total += 0;
         }
 
         const coupon = cart?.couponDiscount || null;

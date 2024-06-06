@@ -80,6 +80,9 @@ const sellerSchema = new mongoose.Schema({
     },
     metaDescription: {
         type: String
+    },
+    address: {
+        type: String
     }
 }, { timestamps: true });
 
