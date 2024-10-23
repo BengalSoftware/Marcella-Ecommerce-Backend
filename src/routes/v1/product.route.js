@@ -85,6 +85,6 @@ router.put(
 router.delete("/all", productController.deleteProducts);
 
 // DONE - DELETE SINGLE PRODUCT - ADMIN
-router.delete("/:id", authentication, productController.deleteProduct);
+router.delete("/:id", productController.deleteProduct);
 
 module.exports = router;
