@@ -20,7 +20,8 @@ const fileFilter = (req, file, callback) => {
             file.mimetype === "image/jpeg" ||
             file.mimetype === "image/jpg" ||
             file.mimetype === "image/gif" ||
-            file.mimetype === "image/png"
+            file.mimetype === "image/png" ||
+            file.mimetype === "image/webp"
         ) {
             callback(null, true);
         } else {

@@ -822,7 +822,6 @@ const createProduct = async (req, res) => {
 
         const uploader = async (path) =>
             await cloudinary.uploads(path, "Products");
-
         const urls = [];
         const files = req.files;
 
@@ -831,7 +830,11 @@ const createProduct = async (req, res) => {
 
             // calll the uploader function and pass parameter a path
             const newPath = await uploader(path);
-            urls.push(newPath.url);
+            if (newPath && newPath.url) {
+                urls.push(newPath.url);
+            } else {
+                console.error(`Failed to upload file: ${path}`);
+            }
 
             fs.unlinkSync(path);
         }
