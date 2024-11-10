@@ -1027,6 +1027,29 @@ const deleteProduct = async (req, res) => {
     }).clone();
 };
 
+// DELETE A SINGLE IMAGE
+
+// we need an id, and the url of the image.
+
+const deleteProductImage = async (req, res) => {
+    try {
+        const product = await Product.findByIdAndUpdate(
+            req.params.id,
+            { $pull: { images: req.body.imageUrl } },
+            { new: true }
+        );
+
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        res.status(200).json({ message: "Image deleted successfully" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error deleting image" });
+    }
+};
+
 // DELETE ALL PRODUCTS
 const deleteProducts = async (req, res) => {
     try {

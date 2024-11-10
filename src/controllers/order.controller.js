@@ -56,6 +56,27 @@ const getOrders = async (req, res) => {
     }
 };
 
+// GET ALL ORDERS WITHOUT ANY Query
+
+const getOrdersWithoutQuery = async (req, res) => {
+    try {
+        const data = await Order.find()
+            .populate('products.product')
+            .populate("user")
+            .populate("report")
+            .exec();
+
+            res.status(200).json({data});
+    }
+    catch(err)
+    {
+        console.log(err);
+        res.status(500).json({
+            error: "There was a server side error!",
+        });
+    }
+}
+
 // DONE - FILTER ORDER
 const filterOrder = async (req, res) => {
     try {
@@ -854,6 +875,7 @@ async function updateDatabaseProductQuantity(
 
 module.exports = {
     getOrder,
+    getOrdersWithoutQuery,
     filterOrder,
     getRecentOrder,
     getOrdersByUserId,

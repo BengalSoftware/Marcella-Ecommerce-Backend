@@ -26,3 +26,17 @@ exports.uploads = (file, folder) => {
         );
     });
 };
+
+exports.destroy = (file) => {
+    return new Promise((resolve) => {
+        cloudinary.uploader.destroy(file, (result, error) => {
+            if (error) {
+                console.error(error);
+                resolve(false);
+            } else {
+                resolve(true);
+                console.log(`Image deleted: ${file} & result: ${result}`);
+            }
+        });
+    });
+}

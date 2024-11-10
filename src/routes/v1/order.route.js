@@ -6,6 +6,8 @@ const orderController = require("../../controllers/order.controller");
 // DONE - GET ALL ORDERS - ADMIN
 router.get("/", orderController.getOrders);
 
+router.get("/allOrders", orderController.getOrdersWithoutQuery);
+
 // DONE - GET Filter ALL ORDERS - ADMIN
 router.get("/filterOrder", authentication, orderController.filterOrder);
 
