@@ -153,6 +153,15 @@ const productSchema = Schema(
             type: Schema.Types.ObjectId,
             ref: 'Seller'
         },
+        approvalStatus: {
+            type: String,
+            enum: ['PENDING', 'APPROVED', 'REJECTED'],
+        },
+        createdBy: {
+            type: String,
+            enum: ['admin', 'seller'],
+            required: true,
+        },
         expireDate: {
             type: Schema.Types.Mixed,
         },

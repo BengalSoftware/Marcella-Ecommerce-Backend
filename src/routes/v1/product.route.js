@@ -7,6 +7,9 @@ const upload = require("../../utils/uploadFiles");
 // DONE - GET ALL PRODUCTS - NONE
 router.get("/", productController.getProducts);
 
+// DONE - GET ALL PRODUCTS - NONE
+router.get("/user", productController.getProductsClient);
+
 // Client side home page all products
 router.get("/all", productController.getAllProducts);
 
@@ -15,6 +18,10 @@ router.post("/searchSuggestion", productController.getSearchSuggestion);
 
 // GET ALL FLASH PRODUCTS ADMIN
 router.get("/flashProduct", productController.getFlashProductsAdmin);
+
+// GET ALL Flash products -> User
+
+router.get("/flashProduct/user", productController.getFlashProductsUser);
 
 // GET ACTIVE ALL Flash products -> CLIENT
 router.get("/flashProduct/all", productController.getAllFlashProducts);
@@ -80,6 +87,10 @@ router.put(
     upload.array("images", 5),
     productController.updateProduct
 );
+
+// to update approvalStaus
+
+router.put("/approvalStatus/:id", productController.updateApprovalStatus);
 
 // DONE - DELETE ALL PRODUCTS - ADMIN
 router.delete("/all", productController.deleteProducts);

@@ -13,7 +13,7 @@ const relatedBanner = require("../models/relatedBanner.model");
 const cron = require("node-cron");
 const Manufacturer = require("../models/manufacturer.model");
 
-// GET ALL PRODUCTS -> CLIENT
+// GET ALL PRODUCTS -> Admin
 const getProducts = async (req, res) => {
     try {
         // let filters = filtersFunction({ ...req?.query });
@@ -202,6 +202,197 @@ const getProducts = async (req, res) => {
 };
 
 
+// GET ALL PRODUCTS -> CLIENT
+const getProductsClient = async (req, res) => {
+    try {
+        // let filters = filtersFunction({ ...req?.query });
+        const qStatus = req.query.status;
+        const qCategory = req.query.category;
+        const qColor = req.query.color;
+        const qSize = req.query.size;
+        const qSort = req.query.sort;
+        const qSearch = req.query.search;
+        const qPrice = req.query.price;
+        const qQuantity = req.query.quantity;
+        const qModel = req.query.model;
+        const qDate = req.query.date;
+        const qFreeShipping = req.query.freeShipping;
+        const qBrand = req.query.brand;
+
+        // queries for products
+        const queries = {};
+        if (qSort) {
+            if (qSort === "newest") {
+                queries.sortBy = { createdAt: -1 };
+            } else if (qSort === "price-asc") {
+                queries.sortBy = { price: 1 };
+            } else if (qSort === "price-desc") {
+                queries.sortBy = { price: -1 };
+            }
+        }
+
+        // fields mean which filed you want such as only name and price
+        // if (req.query.fields) {
+        //     const field = req.query.fields.split(",").join(" ");
+        //     queries.fields = field;
+        // }
+
+        // page calculation
+        const { page = 1, limit = 18 } = req.query || {};
+        const skip = (page - 1) * parseInt(limit);
+        queries.skip = skip;
+        queries.limit = parseInt(limit);
+
+        const filterArr = []
+        filterArr.push({ flashSale: false });
+        if (qSearch) {
+            filterArr.push({
+                $or: [
+                    {
+                        name: {
+                            $regex: qSearch,
+                            $options: "i",
+                        },
+                    },
+                    {
+                        model: {
+                            $regex: qSearch,
+                            $options: "i",
+                        },
+                    },
+                    { tags: { $in: qSearch } },
+                ],
+            });
+        }
+        if (qDate)
+            filterArr.push({
+                createdAt: {
+                    $gte: new Date(qDate + "T00:00:00.000Z"),
+                    $lte: new Date(qDate + "T12:59:59.000Z"),
+                },
+            });
+        if (qCategory) {
+            const modifyCategory = qCategory.split("-").join(" ");
+
+            const category = await Category.findOne({
+                $or: [{ slug: qCategory }, { title: modifyCategory }],
+            }).exec();
+            const subCategories = await subCategory
+                .findOne({
+                    $or: [{ slug: qCategory }, { title: modifyCategory }],
+                })
+                .exec();
+            const subChildCategory = await subcategoryChildren
+                .findOne({
+                    $or: [{ slug: qCategory }, { title: modifyCategory }],
+                })
+                .exec();
+
+            filterArr.push({
+                $or: [
+                    {
+                        "categories._id": category?._id,
+                    },
+                    {
+                        "subcategories._id": subCategories?._id,
+                    },
+                    {
+                        "subcategoryChildren._id": subChildCategory?._id,
+                    },
+                ],
+            });
+        }
+
+        if (qSize) filterArr.push({ "size.name": { $in: [qSize] } });
+        if (qColor) filterArr.push({ "color.name": { $in: [qColor] } });
+
+        if (qPrice) {
+            if (qPrice.includes("-")) {
+                const splitPrice = qPrice.split("-");
+
+                filterArr.push({
+                    price: { $gte: splitPrice[0], $lte: splitPrice[1] },
+                });
+            } else {
+                filterArr.push({
+                    price: qPrice,
+                });
+            }
+        }
+        if (qQuantity) filterArr.push({ quantity: qQuantity });
+        if (qFreeShipping) filterArr.push({ freeShipping: qFreeShipping });
+        if (qBrand) {
+            const brand = await Manufacturer.findOne({ slug: qBrand })
+            filterArr.push({ manufacturer: brand._id })
+        };
+        if (qStatus)
+            filterArr.push({
+                status: {
+                    $regex: qStatus,
+                    $options: "i",
+                },
+            });
+        if (qModel)
+            filterArr.push({
+                model: {
+                    $regex: qModel,
+                    $options: "i",
+                },
+            });
+
+        // final filter
+
+        filterArr.push({approvalStatus: "APPROVED"})
+
+        if (filterArr.length === 0) {
+            const data = await Product.find({ flashSale: false, approvalStatus: "APPROVED" })
+                .skip(queries.skip)
+                .limit(queries.limit);
+
+            const totalProducts = await Product.countDocuments({
+                flashSale: false,
+            });
+            // const totalProductsByFilter = await Product.countDocuments(filters);
+            const totalPageNumber = Math.ceil(totalProducts / queries.limit);
+
+            return res.status(200).json({
+                result: {
+                    totalProducts,
+                    totalPageNumber,
+                    data,
+                },
+                message: "Success",
+            });
+        }
+        const data = await Product.find({ $and: filterArr })
+            .skip(queries.skip)
+            .limit(queries.limit)
+            // .select(queries.fields)
+            .sort({ createdAt: -1, ...queries.sortBy })
+            .populate({ path: "manufacturer", select: "name" })
+        // .pupulate({ path: 'sellerId', select: 'slug' })
+
+        const totalProducts = await Product.countDocuments({ $and: filterArr });
+        // const totalProductsByFilter = await Product.countDocuments(filters);
+        const totalPageNumber = Math.ceil(totalProducts / queries.limit);
+
+        res.status(200).json({
+            result: {
+                totalProducts,
+                totalPageNumber,
+                data,
+            },
+            message: "Success",
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            error: "There was a server side error!",
+        });
+    }
+};
+
+
 
 // GET IMAGE GALLERY 
 const getProductImages = async (req, res) => {
@@ -320,7 +511,136 @@ const getFlashProductsAdmin = async (req, res) => {
         // final filter
 
         if (filterArr.length === 0) {
-            const data = await Product.find({ flashSale: true });
+            const data = await Product.find({ flashSale: true});
+
+            const totalProducts = await Product.countDocuments({
+                flashSale: true,
+            });
+            // const totalProductsByFilter = await Product.countDocuments(filters);
+            const totalPageNumber = Math.ceil(totalProducts / queries.limit);
+
+            return res.status(200).json({
+                result: {
+                    totalProducts,
+                    totalPageNumber,
+                    data,
+                },
+                message: "Success",
+            });
+        }
+        const data = await Product.find({ $and: filterArr })
+            .skip(queries.skip)
+            .limit(queries.limit)
+            // .select(queries.fields)
+            .sort(queries.sortBy)
+            .populate({ path: "manufacturer", select: "name" });
+
+        res.status(200).json({
+            result: { data, timeStamps: 0 },
+            message: "Success",
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            error: "There was a server side error!",
+        });
+    }
+};
+// ADMIN -> GET FLASH PRODUCTS BY FILTER
+const getFlashProductsUser = async (req, res) => {
+    try {
+        // let filters = filtersFunction({ ...req?.query });
+
+        const qFlashStatus = req.query.flashStatus;
+        const qStatus = req.query.status;
+
+        const qSort = req.query.sort;
+        const qSearch = req.query.search;
+        const qPrice = req.query.price;
+        const qQuantity = req.query.quantity;
+        const qModel = req.query.model;
+        const qDate = req.query.date;
+        // queries for products
+        const queries = {};
+        if (qSort) {
+            if (qSort === "newest") {
+                queries.sortBy = { createdAt: -1 };
+            } else if (qSort === "price-asc") {
+                queries.sortBy = { price: 1 };
+            } else if (qSort === "price-desc") {
+                queries.sortBy = { price: -1 };
+            }
+        }
+
+        // fields mean which filed you want such as only name and price
+        // if (req.query.fields) {
+        //     const field = req.query.fields.split(",").join(" ");
+        //     queries.fields = field;
+        // }
+
+        // page calculation
+        const { page = 1, limit = 25 } = req.query || {};
+        const skip = (page - 1) * parseInt(limit);
+        queries.skip = skip;
+        queries.limit = parseInt(limit);
+
+        const filterArr = [];
+
+        filterArr.push({ flashSale: true });
+        if (qFlashStatus) filterArr.push({ flashSaleOfferType: qFlashStatus });
+
+        if (qSearch) {
+            filterArr.push({
+                name: {
+                    $regex: qSearch,
+                    $options: "i",
+                },
+            });
+        }
+        if (qDate)
+            filterArr.push({
+                createdAt: {
+                    $gte: new Date(qDate + "T00:00:00.000Z"),
+                    $lte: new Date(qDate + "T12:59:59.000Z"),
+                },
+            });
+
+        if (qPrice) {
+            if (qPrice.includes("-")) {
+                const splitPrice = qPrice.split("-");
+
+                filterArr.push({
+                    price: { $gte: splitPrice[0], $lte: splitPrice[1] },
+                });
+            } else {
+                filterArr.push({
+                    price: qPrice,
+                });
+            }
+        }
+        if (qQuantity) filterArr.push({ quantity: qQuantity });
+        if (qStatus)
+            filterArr.push({
+                status: {
+                    $regex: qStatus,
+                    $options: "i",
+                },
+            });
+
+        if (qModel)
+            filterArr.push({
+                model: {
+                    $regex: qModel,
+                    $options: "i",
+                },
+            });
+
+        // final filter
+
+        filterArr.push({approvalStatus: "APPROVED"});
+
+        if (filterArr.length === 0) {
+            const data = await Product.find({ flashSale: true, approvalStatus: "APPROVED"});
 
             const totalProducts = await Product.countDocuments({
                 flashSale: true,
@@ -613,6 +933,7 @@ const getProductByProductType = async (req, res) => {
         const data = await Product.find({
             productType: req.params.productType,
             flashSale: false,
+            approvalStatus: "APPROVED"
         }).populate({ path: "manufacturer", select: "name" });
 
         res.status(200).json({
@@ -883,6 +1204,8 @@ const createProduct = async (req, res) => {
             if (req.body.flashSaleOfferType)
                 updateProductObject.flashSaleOfferType =
                     req.body.flashSaleOfferType;
+            
+                updateProductObject.approvalStatus = req.body.createdBy === 'admin' ? "APPROVED" : "PENDING";
 
             const newProduct = new Product(updateProductObject);
 
@@ -1115,6 +1438,29 @@ cron.schedule("*/10 * * * * *", async () => {
     });
 });
 
+const updateApprovalStatus = async (req, res) => {
+    try {
+        const {id} = req.params;
+        const {approvalStatus} = req.query;
+
+        const updateApprovalStatus = await Product.findByIdAndUpdate({_id: id}, {approvalStatus: approvalStatus}, {new: true});
+
+        if (!updateApprovalStatus) {
+            return res.status(404).json({ error: 'Product not found' });
+        }
+
+        res.status(200).json({
+            message: "Product approval status updated successfully!"
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            error: "There was a server side error!",
+        });
+    }
+}
+
 
 
 module.exports = {
@@ -1138,5 +1484,8 @@ module.exports = {
     getCampaignProducts,
     getSixFlashProducts,
     getAllFlashProducts,
-    getProductsBySellerId
+    getProductsBySellerId,
+    getFlashProductsUser,
+    getProductsClient,
+    updateApprovalStatus
 };
