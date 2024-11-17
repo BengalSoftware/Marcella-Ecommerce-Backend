@@ -4,7 +4,19 @@ const cart = require("../models/cart.model");
 const Order = require("../models/order.model");
 const Product = require("../models/product.model");
 const User = require("../models/user.model");
+
+// Brevo email setup code.
+const SibApiV3Sdk = require("sib-api-v3-sdk");
+const defaultClient = SibApiV3Sdk.ApiClient.instance;
+
 require("dotenv").config();
+
+const apiKey = defaultClient.authentications['api-key'];
+apiKey.apiKey = process.env.BREVO_API_KEY;
+
+const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+
+let sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail(); // SendSmtpEmail | Values to send a transactional email
 
 // DONE - GET ALL ORDERS
 const getOrders = async (req, res) => {
@@ -620,7 +632,7 @@ const createOrder = async (req, res) => {
             user: userId,
             selected: true,
         });
-        let newAddressData = activeAddress._id;
+        let newAddressData = activeAddress?._id;
 
         const userCart = await cart
             .findOne({ user: userId })
@@ -661,6 +673,49 @@ const createOrder = async (req, res) => {
         dbUser.orderCompletion += 1;
 
         const newOrder = await new Order(fullOrder);
+
+        const { address } = await Address.findById({_id: newAddressData}, "address");
+
+        // Get the current date and time
+        let now = new Date();
+        
+        // Format the date and time
+        let formattedDate = now.toLocaleString('en-US', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+        }).replace(',', '').replace(':', '.');     
+
+        sendSmtpEmail = {
+            to: [{
+                email: req.params.email,
+                name: fullOrder.userName
+            }],
+            templateId: 1,
+            params: {
+                name: fullOrder.userName,
+                orderID: fullOrder.orderId,
+                date: formattedDate,
+                address: address,
+                discount: fullOrder.discountAmount || 0,
+                shippingFree: fullOrder.shippingCharge,
+                subTotal: req.body.subTotal,
+                total: fullOrder.totalAmount
+            },
+            headers: {
+                'X-Mailin-custom': 'custom_header_1:custom_value_1|custom_header_2:custom_value_2'
+            }
+        };
+        
+        apiInstance.sendTransacEmail(sendSmtpEmail).then(function(data) {
+          console.log('API called successfully. Returned data: ' + data);
+        }, function(error) {
+          console.error(error);
+        });    
+
         await newOrder.save();
         await dbUser.save();
 

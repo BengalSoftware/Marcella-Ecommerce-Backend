@@ -36,6 +36,7 @@
         "passport": "^0.5.3",
         "passport-google-oauth20": "^2.0.0",
         "passport-jwt": "^4.0.1",
+        "sib-api-v3-sdk": "^8.5.0",
         "slugify": "^1.6.5",
         "sslcommerz-lts": "^1.1.0",
         "validator": "^13.9.0"

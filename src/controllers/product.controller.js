@@ -1002,9 +1002,11 @@ const getProductsBySellerId = async (req, res) => {
     try {
         const data = await Product.find({
             sellerId: req.params.id,
+            approvalStatus: "APPROVED"
         })
         const totalProducts = await Product.find({
             sellerId: req.params.id,
+            approvalStatus: "APPROVED"
         }).countDocuments()
         // .populate({ path: "manufacturer", select: "name" });
 
