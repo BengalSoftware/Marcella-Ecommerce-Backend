@@ -38,8 +38,8 @@ router.post("/verify/:email", async (req, res) => {
         const { cartId, couponCode } = req.body;
         if (!cartId || !couponCode || !req.params.email) {
             return res
-                .status(400)
-                .send({ message: `Coupon id and cartId is required` });
+            .status(400)
+            .send({ message: `Coupon id and cartId is required`, success: false });
         }
         // coupon
         const dbCoupon = await Coupon.findOne({
@@ -47,7 +47,7 @@ router.post("/verify/:email", async (req, res) => {
         });
 
         if (!dbCoupon || !dbCoupon.expireDate) {
-            return res.status(400).send({ message: `Coupon is invalid!` });
+            return res.status(400).send({ message: `Coupon is invalid!`, success: false });
         }
 
         // check if user is already applied this coupon or not
@@ -55,24 +55,26 @@ router.post("/verify/:email", async (req, res) => {
         const dbCart = await Cart.findOne({ _id: cartId });
 
         if (!dbCart) {
-            return res.status(400).send({ message: `User cart not found!` });
+            return res.status(400).send({ message: `User cart not found!`, success: false });
         }
 
         if (!dbUser) {
-            return res.status(400).send({ message: `User not found!` });
+            return res.status(400).send({ message: `User not found!`, success: false });
         }
 
         if (dbUser.usedCoupons?.includes(dbCoupon._id)) {
             // Coupon has already been used by the user
             return res
                 .status(400)
-                .send({ message: `This coupon is already used!` });
+                .send({ message: `This coupon is already used!`, success: false, alreadyUse: true });
         } else {
             dbCart.couponDiscount = dbCoupon._id;
             await dbCart.save();
 
             res.status(200).send({
                 message: `Success! Enjoy your discount`,
+                success: true,
+                alreadyUse: false
             });
         }
     } catch (err) {

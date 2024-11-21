@@ -667,7 +667,7 @@ const createOrder = async (req, res) => {
         if (req.body.transactionId)
             fullOrder.transactionId = req.body.transactionId;
 
-        // user model update
+        // // user model update
         if (userCart?.couponDiscount)
             dbUser.usedCoupons.push(userCart.couponDiscount._id.toString());
         dbUser.orderCompletion += 1;
@@ -710,7 +710,7 @@ const createOrder = async (req, res) => {
             }
         };
         
-        apiInstance.sendTransacEmail(sendSmtpEmail).then(function(data) {
+        await apiInstance.sendTransacEmail(sendSmtpEmail).then(function(data) {
           console.log('API called successfully. Returned data: ' + data);
         }, function(error) {
           console.error(error);
