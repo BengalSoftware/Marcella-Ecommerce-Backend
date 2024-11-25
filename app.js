@@ -10,7 +10,7 @@ const multer = require("multer");
 const compression = require('compression');
 const path = require("path");
 const morgan = require("morgan");
-
+const session = require("express-session");
 // import it for google login
 require("./src/config/authenticationPassport");
 require("./src/config/passport")(passport);
@@ -25,7 +25,7 @@ app.use(compression());
 app.use(morgan("common"));
 
 app.use(function (req, res, next) {
-    var allowedOrigins = ['https://veendeshi.com', 'https://www.veendeshi.com', 'https://admin.veendeshi.com'];
+    var allowedOrigins = ['https://veendeshi.com', 'https://www.veendeshi.com', 'https://admin.veendeshi.com', 'http://localhost:3001', 'http://localhost:3000'];
     var origin = req.headers.origin;
     //  if (allowedOrigins.indexOf(origin) > -1) {
     //     res.setHeader('Access-Control-Allow-Origin', origin);
@@ -38,7 +38,7 @@ app.use(function (req, res, next) {
 });
 
 app.use(cors({
-    origin: "*",
+    origin: ['https://veendeshi.com', 'https://www.veendeshi.com', 'https://admin.veendeshi.com', 'http://localhost:3001', 'http://localhost:3000'],
     methods: "GET,POST,PUT,DELETE,OPTIONS",
     credentials: true
 }));
@@ -61,6 +61,12 @@ app.use(
         // maxAge: 24 * 60 * 60 * 100,
     })
 );
+
+app.use(session({
+    secret: process.env.JWT_SECRET,
+    resave: false,
+    saveUninitialized: true
+}))
 
 // passport initialization and session
 app.use(passport.initialize());

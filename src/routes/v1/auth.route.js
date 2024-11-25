@@ -3,6 +3,7 @@ const authController = require("../../controllers/auth.controller");
 const passport = require("passport");
 const { generateToken } = require("../../utils/token");
 const router = express.Router();
+require("dotenv").config();
 
 // DONE - REGISTER SINGLE USER - CLIENT
 router.post("/register", authController.register);
@@ -47,14 +48,14 @@ router.get("/login/failed", (req, res) => {
 
 // LOG OUT ROUTE GOOGLE
 router.get("/logout", (req, res, next) => {
-    req.logout();
-    res.redirect(process.env.CLIENT_URL);
+    req.logout(function () {
+        res.redirect(process.env.CLIENT_URL);
+    });
 });
 
 // GOOGLE LOGIN SUCCESS URL
 router.get("/login/success", (req, res) => {
     // DONE make a token to send google user
-
     try {
         if (req.user) {
             const user = {
@@ -63,14 +64,20 @@ router.get("/login/success", (req, res) => {
             };
             const token = generateToken(user);
             res.status(200).json({
-                success: true,
+                data: {
+                    token: token,
+                    user: user,
+                },
                 message: "successfully oAuth login",
-                user: user,
-                token: token,
+                success: true
             });
-        } else {
-            res.status(200).json({
-                success: true,
+            console.log(user);
+        }
+        else
+        {
+            res.status(401).json({
+                success: false,
+                message: "No user found",
             });
         }
     } catch (error) {
@@ -97,8 +104,8 @@ router.get(
     "/google/callback",
 
     passport.authenticate("google", {
-        successRedirect: process.env.CLIENT_URL,
-        failureRedirect: "/login/failed",
+        successRedirect: process.env.CLIENT_URL + "/account",
+        failureRedirect: process.env.CLIENT_URL + "/login",
     })
 );
 
