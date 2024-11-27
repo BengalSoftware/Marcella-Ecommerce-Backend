@@ -23,36 +23,35 @@ const getOrders = async (req, res) => {
     try {
         const qStatus = req.query.status;
 
-        // take an filter empty array to push all filters
+        // Initialize a filter array
         const filterArr = [];
         if (qStatus) {
             filterArr.push({ status: { $regex: qStatus, $options: "i" } });
         } else {
-            // initially status pending
+            // Default status is "pending"
             filterArr.push({ status: "pending" });
         }
 
-        // take empty object to calculate page and limit
-        let queries = {};
-        // page calculation
-
+        // Pagination setup
         const { page = 1, limit = 25 } = req.query || {};
         const skip = (page - 1) * parseInt(limit);
-        queries.skip = skip;
-        queries.limit = parseInt(limit);
+        const queries = {
+            skip,
+            limit: parseInt(limit),
+        };
 
-        // final searching
+        // Fetch sorted data
         const data = await Order.find({ $and: filterArr })
-            .populate('products.product')
-            .skip(queries.skip)
-            .limit(queries.limit)
+            .populate("products.product")
             .populate("user")
             .populate("report")
+            .sort({ createdAt: -1 }) // Sort by createdAt in descending order
+            .skip(queries.skip)
+            .limit(queries.limit)
             .exec();
 
-        // pages calculation
+        // Calculate total orders and pages
         const totalOrders = await Order.countDocuments({ $and: filterArr });
-        // const totalProductsByFilter = await Product.countDocuments(filters);
         const totalPageNumber = Math.ceil(totalOrders / queries.limit);
 
         res.status(200).json({
